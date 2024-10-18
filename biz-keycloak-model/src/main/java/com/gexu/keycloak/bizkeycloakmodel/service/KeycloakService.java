@@ -1,7 +1,6 @@
 package com.gexu.keycloak.bizkeycloakmodel.service;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
 import com.gexu.keycloak.bizkeycloakmodel.repository.KeycloakGroupRepository;
 import com.gexu.keycloak.bizkeycloakmodel.repository.KeycloakRoleRepository;
 import com.gexu.keycloak.bizkeycloakmodel.repository.UserEntityRepository;
@@ -30,14 +29,9 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @Service
 @Transactional(transactionManager = "keycloakTransactionManager")
@@ -193,13 +187,6 @@ public class KeycloakService {
   public GroupResource getGroupResource(String id) {
 
     return getGroupsResource().group(id);
-  }
-
-  public Collection<UserRepresentation> getUsersByGroupId(String groupId) {
-
-    // members()默认最大100条数据，此处使用分页查询
-    // briefRepresentation：只返回基础信息
-    return keycloak.realm(realm).groups().group(groupId).members(0, 500, true);
   }
 
   public GroupResource newGroupResource(String name, String parentId) {

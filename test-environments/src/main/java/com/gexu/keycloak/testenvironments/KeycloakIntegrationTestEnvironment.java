@@ -1,6 +1,6 @@
 package com.gexu.keycloak.testenvironments;
 
-import com.example.gxtpservice.bizkeycloakmodel.service.KeycloakService;
+import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
