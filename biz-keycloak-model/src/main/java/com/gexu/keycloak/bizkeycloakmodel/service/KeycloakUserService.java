@@ -127,8 +127,7 @@ public class KeycloakUserService {
   private Specification<UserEntity> userNameNotStart() {
 
     return (root, query, criteriaBuilder) -> criteriaBuilder.and(
-        criteriaBuilder.notLike(root.get(UserEntity_.USERNAME), "reserved_%"),
-        criteriaBuilder.notLike(root.get(UserEntity_.USERNAME), "大系统-%")
+        criteriaBuilder.notLike(root.get(UserEntity_.USERNAME), "reserved_%")
     );
   }
 
@@ -414,7 +413,7 @@ public class KeycloakUserService {
         keycloakService.getAuthServerUrl(),
         keycloakService.getRealm());
     // 因为 console-cli 出于安全考虑，禁止了通过 API 直接获取 token，所以要验证原密码是否正确，需要借道
-    // 不支持页面登录的 client，此处借用的是专为模型调用的 model-cli
+    // 不支持页面登录的 client，此处借用的是 model-cli
     final var jsonObject = WebClient.create(tokenUrl)
         .post()
         .body(BodyInserters.fromFormData("client_id", "model-cli")

@@ -420,26 +420,4 @@ public class KeycloakService {
 
     keycloak.realm(realm).deleteSession(sessionState, false);
   }
-
-  public ResponseEntity<JSONObject> getAccessToken(String username, String password) {
-
-    final var jsonObject = WebClient.create(
-            authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token")
-        .post()
-        .body(BodyInserters.fromFormData("grant_type", "password")
-            .with("username", username)
-            .with("password", password)
-            .with("client_id", clientId)
-            .with("scope", "openid"))
-        .accept(MediaType.APPLICATION_FORM_URLENCODED)
-        .exchangeToMono(clientResponse -> clientResponse.statusCode().equals(HttpStatus.OK)
-            ? clientResponse.bodyToMono(JSONObject.class) : Mono.empty())
-        .block();
-
-    if (null == jsonObject) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "原密码错误！");
-    }
-
-    return ResponseEntity.ok(jsonObject);
-  }
 }
