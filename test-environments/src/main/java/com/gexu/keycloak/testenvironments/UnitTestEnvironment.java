@@ -1,11 +1,12 @@
 package com.gexu.keycloak.testenvironments;
 
-import com.example.gxtpservice.bizkeycloakmodel.model.KeycloakRole;
-import com.example.gxtpservice.bizkeycloakmodel.model.UserEntity;
-import com.example.gxtpservice.bizkeycloakmodel.repository.UserEntityRepository;
-import com.example.gxtpservice.bizkeycloakmodel.service.KeycloakService;
+
 import java.util.Optional;
 import java.util.Set;
+import com.gexu.keycloak.bizkeycloakmodel.model.KeycloakRole;
+import com.gexu.keycloak.bizkeycloakmodel.model.UserEntity;
+import com.gexu.keycloak.bizkeycloakmodel.repository.UserEntityRepository;
+import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakService;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
