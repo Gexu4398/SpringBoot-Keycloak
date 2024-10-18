@@ -1,0 +1,41 @@
+services:
+
+  postgres:
+    image: postgres:alpine3.20
+    restart: always
+    command: postgres -c 'max_connections=250'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=example
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-postgres:/docker-entrypoint-initdb.d
+
+  keycloak:
+    image: bitnami/keycloak:26.0.0
+    restart: always
+    environment:
+      # 启用CLI占位符替换
+      - JAVA_OPTS="-Dkeycloak.migration.replace-placeholders=true"
+      - BASE_URL=http://localhost/
+      - APP_NAME=MySystem
+      - KEYCLOAK_DATABASE_HOST=postgres
+      - KEYCLOAK_CREATE_ADMIN_USER=true
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_USER=root
+      - KEYCLOAK_DATABASE_PASSWORD=example
+      # 开启反向代理
+      - KEYCLOAK_PROXY_HEADERS=xforwarded
+      - KEYCLOAK_HTTP_RELATIVE_PATH=/auth
+      - KEYCLOAK_PRODUCTION=true
+      - KEYCLOAK_EXTRA_ARGS=--http-enabled=true --import-realm --spi-theme-static-max-age=-1 --spi-theme-cache-themes=false --spi-theme-cache-templates=false
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./init-keycloak/realm.json:/opt/bitnami/keycloak/data/import/realm.json
+      - ./init-keycloak/tp-theme:/opt/bitnami/keycloak/themes/tp-theme
+    depends_on:
+      - postgres
