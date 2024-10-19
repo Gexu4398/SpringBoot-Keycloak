@@ -60,6 +60,12 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>com.gexu.keycloak</groupId>
+      <artifactId>test-environments</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>

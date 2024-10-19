@@ -9,6 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
+  <groupId>com.gexu.keycloak</groupId>
   <artifactId>test-environments</artifactId>
 
   <properties>
