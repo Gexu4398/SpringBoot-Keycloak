@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
     "spring.profiles.active=test",
     "app.show-sql=true",
-    "app.ai.baseUrl=http://localhost:8090/",
     "logging.level.liquibase=debug",
 })
 @Slf4j

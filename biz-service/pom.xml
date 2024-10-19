@@ -104,10 +104,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.github.javafaker</groupId>
       <artifactId>javafaker</artifactId>
     </dependency>
