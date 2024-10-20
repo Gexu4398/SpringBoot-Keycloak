@@ -2,12 +2,14 @@ package com.gexu.keycloak.bizservice.integration.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
+import com.gexu.keycloak.bizkeycloakmodel.model.request.UpdateUserRequest;
 import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
 import java.util.Set;
 import lombok.SneakyThrows;
@@ -46,5 +48,24 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         .andExpect(jsonPath("$.picture", equalTo(request.getPicture())))
         .andExpect(jsonPath("$.role[0].id", equalTo(CollUtil.getFirst(request.getRoleId()))))
         .andExpect(jsonPath("$.group.id", equalTo(request.getGroupId())));
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateUser() {
+
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
+
+    final var request = new UpdateUserRequest();
+    request.setName(faker.name().firstName());
+    request.setPhoneNumber(faker.phoneNumber().cellPhone());
+    request.setPicture(faker.internet().image());
+
+    mockMvc.perform(put("/user/" + user.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JSONUtil.toJsonStr(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.phoneNumber", equalTo(request.getPhoneNumber())))
+        .andExpect(jsonPath("$.picture", equalTo(request.getPicture())));
   }
 }

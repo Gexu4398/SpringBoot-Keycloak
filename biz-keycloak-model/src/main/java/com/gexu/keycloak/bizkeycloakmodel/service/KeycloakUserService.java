@@ -18,7 +18,6 @@ import com.gexu.keycloak.bizkeycloakmodel.model.request.UpdateUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.repository.EventEntityRepository;
 import com.gexu.keycloak.bizkeycloakmodel.repository.UserEntityRepository;
 import jakarta.persistence.criteria.JoinType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -347,15 +345,13 @@ public class KeycloakUserService {
       userResource.joinGroup(request.getGroupId());
     }
     keycloakService.detachAllRoleResource(userRepresentation.getUsername());
-    List<RoleRepresentation> roles = new ArrayList<>();
-    for (String roleId : request.getRoleId()) {
-      if (StrUtil.isNotBlank(roleId)) {
-        final var roleRepresentation = keycloakService.getRealmResource().rolesById()
-            .getRole(roleId);
-        roles.add(roleRepresentation);
-      }
+    if (CollUtil.isNotEmpty(request.getRoleId())) {
+      final var roles = request.getRoleId().stream()
+          .filter(StrUtil::isNotBlank)
+          .map(it -> keycloakService.getRealmResource().rolesById().getRole(it))
+          .collect(Collectors.toList());
+      keycloakService.attachRoleResource(userRepresentation.getUsername(), roles);
     }
-    keycloakService.attachRoleResource(userRepresentation.getUsername(), roles);
     return getUserResponse(userResource.toRepresentation().getId());
   }
 
