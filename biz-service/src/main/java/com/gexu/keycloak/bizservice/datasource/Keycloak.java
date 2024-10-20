@@ -2,11 +2,9 @@ package com.gexu.keycloak.bizservice.datasource;
 
 import java.util.Map;
 import javax.sql.DataSource;
-import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -27,13 +25,23 @@ public class Keycloak {
 
   @Autowired
   public Keycloak(Environment environment) {
+
     this.environment = environment;
   }
 
   @Bean
+  @Primary
   @ConfigurationProperties(prefix = "app.datasource.keycloak")
+  public DataSourceProperties keycloakDataSourceProperties() {
+
+    return new DataSourceProperties();
+  }
+
+  @Bean
+  @Primary
   public DataSource keycloakDataSource() {
-    return DataSourceBuilder.create().build();
+
+    return keycloakDataSourceProperties().initializeDataSourceBuilder().build();
   }
 
   @Bean
@@ -53,6 +61,7 @@ public class Keycloak {
 
   @Bean
   public HibernateJpaVendorAdapter keycloakHibernateJpaVendorAdapter() {
+
     final var hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
     hibernateJpaVendorAdapter.setShowSql(true);
     hibernateJpaVendorAdapter.setGenerateDdl(true);
@@ -60,7 +69,6 @@ public class Keycloak {
         environment.getProperty("app.datasource.keycloak.dialect"));
     return hibernateJpaVendorAdapter;
   }
-
 
   @Bean
   public JpaTransactionManager keycloakTransactionManager() {
@@ -73,24 +81,6 @@ public class Keycloak {
   }
 
   @Bean
-  @ConfigurationProperties(prefix = "app.datasource.biz")
-  public DataSourceProperties bizDataSourceProperties() {
-
-    return new DataSourceProperties();
-  }
-
-  @Bean
-  @Primary
-  @ConfigurationProperties(prefix = "app.datasource.biz.hikari")
-  public HikariDataSource bizDataSource() {
-
-    return bizDataSourceProperties()
-        .initializeDataSourceBuilder()
-        .type(HikariDataSource.class)
-        .build();
-  }
-
-  @Bean
   @Primary
   public HibernateJpaVendorAdapter bizHibernateJpaVendorAdapter() {
 
@@ -98,7 +88,7 @@ public class Keycloak {
     hibernateJpaVendorAdapter.setShowSql(true);
     hibernateJpaVendorAdapter.setGenerateDdl(true);
     hibernateJpaVendorAdapter.setDatabasePlatform(
-        environment.getProperty("app.datasource.biz.dialect"));
+        environment.getProperty("app.datasource.keycloak.dialect"));
     return hibernateJpaVendorAdapter;
   }
 }

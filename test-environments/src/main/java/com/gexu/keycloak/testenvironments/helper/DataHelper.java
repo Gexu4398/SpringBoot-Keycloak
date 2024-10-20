@@ -8,11 +8,11 @@ import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakGroupService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakRoleService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import java.util.List;
 
 @Component
 @Validated
@@ -39,6 +39,15 @@ public class DataHelper {
     final var request = new NewUserRequest();
     request.setUsername(username);
     request.setPassword(password);
+    return keycloakUserService.newUser(request);
+  }
+
+  public User newUser(String username, String password, String groupId) {
+
+    final var request = new NewUserRequest();
+    request.setUsername(username);
+    request.setPassword(password);
+    request.setGroupId(groupId);
     return keycloakUserService.newUser(request);
   }
 

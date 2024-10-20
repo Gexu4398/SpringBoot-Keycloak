@@ -50,22 +50,6 @@ div#kc-header {
   align-items: center;
 }
 
-div#kc-header::before {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  content: '';
-  background-image: url("../img/logo.png");
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: center;
-  height: 65px;
-  width: 50px;
-  margin-right: 8px;
-  background-size: contain;
-}
-
 #login-text {
   padding-top: 48px;
   font-size: 30px;

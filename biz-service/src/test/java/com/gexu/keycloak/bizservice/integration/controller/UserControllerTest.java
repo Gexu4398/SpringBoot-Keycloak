@@ -14,6 +14,7 @@ import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
 import java.util.Set;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -67,5 +68,34 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.phoneNumber", equalTo(request.getPhoneNumber())))
         .andExpect(jsonPath("$.picture", equalTo(request.getPicture())));
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateUser_group() {
+
+    final var group = dataHelper.newGroup(faker.team().name(), null);
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password(),
+        group);
+
+    Assertions.assertEquals(user.getGroup().getId(), group);
+
+    final var group_2 = dataHelper.newGroup(faker.team().name(), null);
+
+    final var request = new UpdateUserRequest();
+    request.setName(faker.name().firstName());
+    request.setGroupId(group_2);
+
+    mockMvc.perform(put("/user/" + user.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JSONUtil.toJsonStr(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.group.id", equalTo(group_2)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetUser() {
+
   }
 }

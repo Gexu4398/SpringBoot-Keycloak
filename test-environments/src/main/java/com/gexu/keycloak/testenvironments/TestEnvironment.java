@@ -4,7 +4,6 @@ import com.gexu.keycloak.testenvironments.helper.DataHelper;
 import com.github.javafaker.Faker;
 import jakarta.persistence.EntityManager;
 import java.util.Locale;
-import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInstance;
@@ -32,8 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @Rollback(false)
 abstract class TestEnvironment {
 
-// 最新版本keycloak中realm新增了UserProfile，管理用户名，设置translations并删除up-username-not-idn-homograph后即可正常添加中文用户名
-// 单元测试不考虑中文用户名，此处不设置中文
+  // 最新版本keycloak中realm新增了UserProfile，管理用户名，设置translations并删除up-username-not-idn-homograph后即可正常添加中文用户名
+  // 单元测试不考虑中文用户名，此处不设置中文
 // protected Faker faker = new Faker(Locale.CHINA);
   protected Faker faker = new Faker(Locale.ENGLISH);
 
@@ -46,10 +45,6 @@ abstract class TestEnvironment {
   @Autowired
   @Qualifier("keycloakEntityManager")
   protected EntityManager keycloakEntityManager;
-
-  @Autowired
-  @Qualifier("bizDataSource")
-  private DataSource bizDataSource;
 
   @AfterEach
   void afterEach() {
