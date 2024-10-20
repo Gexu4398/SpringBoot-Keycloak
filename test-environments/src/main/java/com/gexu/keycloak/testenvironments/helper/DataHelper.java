@@ -1,5 +1,6 @@
 package com.gexu.keycloak.testenvironments.helper;
 
+import cn.hutool.core.util.StrUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.Group;
 import com.gexu.keycloak.bizkeycloakmodel.model.Role;
 import com.gexu.keycloak.bizkeycloakmodel.model.User;
@@ -9,6 +10,7 @@ import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakGroupService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakRoleService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,12 +44,15 @@ public class DataHelper {
     return keycloakUserService.newUser(request);
   }
 
-  public User newUser(String username, String password, String groupId) {
+  public User newUser(String username, String password, String groupId, String roleId) {
 
     final var request = new NewUserRequest();
     request.setUsername(username);
     request.setPassword(password);
     request.setGroupId(groupId);
+    if (StrUtil.isNotBlank(roleId)) {
+      request.setRoleId(Set.of(roleId));
+    }
     return keycloakUserService.newUser(request);
   }
 

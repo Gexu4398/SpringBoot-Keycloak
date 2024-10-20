@@ -8,11 +8,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.UpdateUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
 import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
+import com.gexu.keycloak.testenvironments.service.KeycloakAccessTokenService;
+import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,9 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
   private KeycloakUserService keycloakUserService;
+
+  @Autowired
+  private KeycloakAccessTokenService keycloakAccessTokenService;
 
   @Test
   @SneakyThrows
@@ -82,7 +88,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var group = dataHelper.newGroup(faker.team().name(), null);
     final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password(),
-        group);
+        group, null);
 
     Assertions.assertEquals(user.getGroup().getId(), group);
 
@@ -97,6 +103,28 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.group.id", equalTo(group_2)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateUser_role() {
+
+    final var role = dataHelper.newRole(faker.name().title());
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password(),
+        null, role.getId());
+
+    final var role_2 = dataHelper.newRole(faker.name().title());
+
+    final var request = new UpdateUserRequest();
+    request.setName(faker.name().firstName());
+    request.setRoleId(Set.of(role_2.getId()));
+
+    mockMvc.perform(put("/user/" + user.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JSONUtil.toJsonStr(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.role.size()", equalTo(1)))
+        .andExpect(jsonPath("$.role[0].id", equalTo(role_2.getId())));
   }
 
   @Test
@@ -131,5 +159,102 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         .andExpect(jsonPath("$.picture", equalTo(request.getPicture())))
         .andExpect(jsonPath("$.role[0].id", equalTo(CollUtil.getFirst(request.getRoleId()))))
         .andExpect(jsonPath("$.group.id", equalTo(request.getGroupId())));
+  }
+
+  @Test
+  @SneakyThrows
+  void testGetUsers() {
+
+    final var group = dataHelper.newGroup(faker.team().name(), null);
+    final var group_2 = dataHelper.newGroup(faker.team().name(), null);
+    final var role = dataHelper.newRole(faker.name().title());
+
+    dataHelper.newUser(faker.name().firstName(), faker.internet().password());
+    dataHelper.newUser(faker.name().firstName(), faker.internet().password(), group, null);
+    dataHelper.newUser(faker.name().firstName(), faker.internet().password(), group, role.getId());
+    dataHelper.newUser(faker.name().firstName(), faker.internet().password(), group_2,
+        role.getId());
+
+    mockMvc.perform(get("/user"))
+        .andExpect(status().isOk())
+        // 默认会有admin用户，此处需要为5
+        .andExpect(jsonPath("$.content.length()", equalTo(5)));
+
+    mockMvc.perform(get("/user")
+            .param("status", "normal"))
+        .andExpect(status().isOk())
+        // admin用户没有状态，且只有角色不为空的才是normal状态
+        .andExpect(jsonPath("$.content.length()", equalTo(2)));
+
+    mockMvc.perform(get("/user")
+            .param("groupId", group_2))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()", equalTo(1)));
+
+    mockMvc.perform(get("/user")
+            .param("roleId", role.getId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()", equalTo(2)));
+
+    mockMvc.perform(get("/user")
+            .param("groupId", group)
+            .param("roleId", role.getId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()", equalTo(1)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testDisable_and_enable_user() {
+
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
+
+    mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":disable"))
+        .andExpect(status().isOk());
+
+    Assertions.assertFalse(keycloakUserService.getUser(user.getId()).getEnabled());
+
+    mockMvc.perform(post("/user/" + user.getId() + ":enable"))
+        .andExpect(status().isOk());
+
+    Assertions.assertTrue(keycloakUserService.getUser(user.getId()).getEnabled());
+  }
+
+  @Test
+  @SneakyThrows
+  void testOnlineUserNum() {
+
+    dataHelper.newUser("user_1", "user_1");
+    dataHelper.newUser("user_2", "user_2");
+    dataHelper.newUser("user_3", "user_3");
+    dataHelper.newUser("user_4", "user_4");
+    dataHelper.newUser("user_5", "user_5");
+
+    keycloakAccessTokenService.getBearer(keycloak, "user_1", "user_1");
+    keycloakAccessTokenService.getBearer(keycloak, "user_2", "user_2");
+    keycloakAccessTokenService.getBearer(keycloak, "user_3", "user_3");
+    keycloakAccessTokenService.getBearer(keycloak, "user_4", "user_4");
+
+    mockMvc.perform(get("/user/onlineNum"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.count", equalTo(4)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testOfflineUserNum() {
+
+    dataHelper.newUser("user_1", "user_1");
+    dataHelper.newUser("user_2", "user_2");
+    dataHelper.newUser("user_3", "user_3");
+    dataHelper.newUser("user_4", "user_4");
+    dataHelper.newUser("user_5", "user_5");
+
+    keycloakAccessTokenService.getBearer(keycloak, "user_3", "user_3");
+    keycloakAccessTokenService.getBearer(keycloak, "user_4", "user_4");
+
+    mockMvc.perform(get("/user/offlineNum"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.count", equalTo(4)));
   }
 }
