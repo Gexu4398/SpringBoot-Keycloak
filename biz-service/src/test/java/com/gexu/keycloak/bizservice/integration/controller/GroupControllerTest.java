@@ -9,10 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import cn.hutool.json.JSONUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.Group;
+import com.gexu.keycloak.bizkeycloakmodel.model.request.RenameGroupRequest;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakGroupService;
 import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,6 +41,36 @@ public class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
 
     mockMvc.perform(get("/department"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()", equalTo(1)));
+        .andExpect(jsonPath("$.length()", equalTo(1)))
+        .andExpect(jsonPath("$.[?(@.name=='" + group.getName() + "')]", hasSize(1)));
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateGroup() {
+
+    final var group = new Group();
+    group.setName(faker.name().bloodGroup());
+
+    mockMvc.perform(post("/department")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JSONUtil.toJsonStr(group)))
+        .andExpect(status().isOk());
+
+    Assertions.assertEquals(1, keycloakGroupService.getGroups().size());
+    final var managedGroup = keycloakGroupService.getGroups().getFirst();
+
+    final var request = new RenameGroupRequest();
+    request.setNewGroupName(faker.name().bloodGroup());
+
+    mockMvc.perform(post("/department/" + managedGroup.getId() + ":rename")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JSONUtil.toJsonStr(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name", equalTo(request.getNewGroupName())));
+
+    Assertions.assertEquals(1, keycloakGroupService.getGroups().size());
+    Assertions.assertEquals(request.getNewGroupName(),
+        keycloakGroupService.getGroups().getFirst().getName());
   }
 }

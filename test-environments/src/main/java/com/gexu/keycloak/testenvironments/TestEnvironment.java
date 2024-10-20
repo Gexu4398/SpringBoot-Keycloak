@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import jakarta.persistence.EntityManager;
 import java.util.Locale;
 import javax.sql.DataSource;
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -46,22 +45,9 @@ abstract class TestEnvironment {
   @Qualifier("bizDataSource")
   private DataSource bizDataSource;
 
-  // 此处不能用 BeforeEach，否则会清空 CustomTestExecutionListener 创建的数据
   @AfterEach
   @SneakyThrows
   void afterEach() {
 
-    @Cleanup final var conn = bizDataSource.getConnection();
-    // 禁用约束
-    conn.createStatement().execute("SET REFERENTIAL_INTEGRITY = FALSE");
-    // 罗列表对象
-    final var tables = conn.createStatement().executeQuery("show tables");
-    // 删除表数据
-    while (tables.next()) {
-      final var tableName = String.format("%s.%s", tables.getString(2), tables.getString(1));
-      conn.createStatement().execute("truncate table " + tableName);
-    }
-    // 启用约束
-    conn.createStatement().execute("SET REFERENTIAL_INTEGRITY = TRUE");
   }
 }
