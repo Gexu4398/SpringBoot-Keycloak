@@ -1,10 +1,10 @@
 package com.gexu.keycloak.testenvironments;
 
+import com.gexu.keycloak.testenvironments.helper.DataHelper;
 import com.github.javafaker.Faker;
 import jakarta.persistence.EntityManager;
 import java.util.Locale;
 import javax.sql.DataSource;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInstance;
@@ -32,7 +32,10 @@ import org.springframework.test.web.servlet.MockMvc;
 @Rollback(false)
 abstract class TestEnvironment {
 
-  protected Faker faker = new Faker(new Locale("zh-CN"));
+  protected Faker faker = new Faker(Locale.CHINA);
+
+  @Autowired
+  protected DataHelper dataHelper;
 
   @Autowired
   protected MockMvc mockMvc;
@@ -46,7 +49,6 @@ abstract class TestEnvironment {
   private DataSource bizDataSource;
 
   @AfterEach
-  @SneakyThrows
   void afterEach() {
 
   }
