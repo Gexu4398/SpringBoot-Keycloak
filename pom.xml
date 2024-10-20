@@ -46,11 +46,11 @@
     <spring.boot-version>3.3.4</spring.boot-version>
     <keycloak-version>26.0.0</keycloak-version>
     <hutool-version>5.8.31</hutool-version>
-    <testcontainers-version>1.20.1</testcontainers-version>
-    <testcontainers.keycloak-version>3.4.0</testcontainers.keycloak-version>
+    <testcontainers-version>1.20.2</testcontainers-version>
+    <testcontainers.keycloak-version>3.5.1</testcontainers.keycloak-version>
     <springdoc.openapi.ui-version>2.6.0</springdoc.openapi.ui-version>
     <javafaker-version>1.0.2</javafaker-version>
-    <testcontainers.postgres-version>1.20.1</testcontainers.postgres-version>
+    <testcontainers.postgres-version>1.20.2</testcontainers.postgres-version>
     <javax.el-api-version>3.0.1-b06</javax.el-api-version>
     <javax.el-version>2.2.6</javax.el-version>
     <tess4j.version>5.13.0</tess4j.version>
