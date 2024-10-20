@@ -32,7 +32,10 @@ import org.springframework.test.web.servlet.MockMvc;
 @Rollback(false)
 abstract class TestEnvironment {
 
-  protected Faker faker = new Faker(Locale.CHINA);
+// 最新版本keycloak中realm新增了UserProfile，管理用户名，设置translations并删除up-username-not-idn-homograph后即可正常添加中文用户名
+// 单元测试不考虑中文用户名，此处不设置中文
+// protected Faker faker = new Faker(Locale.CHINA);
+  protected Faker faker = new Faker(Locale.ENGLISH);
 
   @Autowired
   protected DataHelper dataHelper;

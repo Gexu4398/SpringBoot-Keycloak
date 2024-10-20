@@ -5,7 +5,7 @@
 
 ## 技术栈
 - **后端**: Spring Boot 3.3.4
-- **身份验证**: bitnami/keycloak 26.0.0
+- **身份验证**: bitnami/keycloak 26.0.1
 - **数据库**: PostgreSQL 17
 - **构建工具**: Maven 3.9.5
 
@@ -16,6 +16,12 @@
 - Maven 3.9.5 或更高版本
 - PostgreSQL 16 或更高版本
 - Docker
+
+## KEYCLOAK
+
+**注意**
+1. `ssl-required` 一定要设置为 `none`，包括系统中也要同步设置，否则对于 http 请求，会一直 401.
+2. 新版keycloak请在控制台的realm-User profile中增加配置phoneNumber和picture，否则无法添加
 
 ### 克隆项目
 ```bash

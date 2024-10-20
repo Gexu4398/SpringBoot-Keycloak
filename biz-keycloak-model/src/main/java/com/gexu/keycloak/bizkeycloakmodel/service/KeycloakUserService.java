@@ -202,16 +202,14 @@ public class KeycloakUserService {
       userResource.joinGroup(request.getGroupId());
     }
     final var userRepresentation = userResource.toRepresentation();
-    List<RoleRepresentation> roles = new ArrayList<>();
-    for (String roleId : request.getRoleId()) {
-      if (StrUtil.isNotBlank(roleId)) {
-        final var roleRepresentation = keycloakService.getRealmResource().rolesById()
-            .getRole(roleId);
-        roles.add(roleRepresentation);
-      }
+    if (CollUtil.isNotEmpty(request.getRoleId())) {
+      final var roles = request.getRoleId().stream()
+          .filter(StrUtil::isNotBlank)
+          .map(it -> keycloakService.getRealmResource().rolesById().getRole(it))
+          .collect(Collectors.toList());
+      keycloakService.attachRoleResource(userRepresentation.getUsername(), roles);
+      keycloakService.acceptUser(userRepresentation.getId());
     }
-    keycloakService.attachRoleResource(userRepresentation.getUsername(), roles);
-    keycloakService.acceptUser(userRepresentation.getId());
     return getUserResponse(userRepresentation.getId());
   }
 
@@ -225,6 +223,12 @@ public class KeycloakUserService {
             .getAttributes()
             .stream()
             .filter(it -> "phoneNumber".equals(it.getName()))
+            .findFirst().orElseGet(UserAttribute::new)
+            .getValue())
+        .picture(user
+            .getAttributes()
+            .stream()
+            .filter(it -> "picture".equals(it.getName()))
             .findFirst().orElseGet(UserAttribute::new)
             .getValue())
         .name(user.getFirstName())

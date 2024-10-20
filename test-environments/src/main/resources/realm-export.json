@@ -369,6 +369,13 @@
     "FreeOTP",
     "Google Authenticator"
   ],
+  "localizationTexts" : {
+    "zh-CN" : {
+      "profile.attributes.phoneNumber" : "Chinese (Simplified)",
+      "username" : "Chinese (Simplified)",
+      "profile.attributes.picture" : "Chinese (Simplified)"
+    }
+  },
   "webAuthnPolicyRpEntityName" : "keycloak",
   "webAuthnPolicySignatureAlgorithms" : [
     "ES256"
@@ -1324,6 +1331,18 @@
         }
       }
     ],
+    "org.keycloak.userprofile.UserProfileProvider" : [
+      {
+        "id" : "3ae310c1-d9e2-475d-be4d-7a7add9b4f2a",
+        "providerId" : "declarative-user-profile",
+        "subComponents" : {},
+        "config" : {
+          "kc.user.profile.config" : [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"phoneNumber\",\"displayName\":\"${profile.attributes.phoneNumber}\",\"validations\":{\"length\":{\"min\":\"10\",\"max\":\"15\"}},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"picture\",\"displayName\":\"${profile.attributes.picture}\",\"validations\":{},\"annotations\":{},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}]}"
+          ]
+        }
+      }
+    ],
     "org.keycloak.keys.KeyProvider" : [
       {
         "id" : "c7e20295-9146-4f96-a3ec-7f282ca55bec",
@@ -2075,7 +2094,7 @@
     "frontendUrl" : "",
     "acr.loa.map" : "{}"
   },
-  "keycloakVersion" : "26.0.0",
+  "keycloakVersion" : "26.0.1",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : []

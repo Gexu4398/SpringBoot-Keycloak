@@ -26,7 +26,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 @Slf4j
 @WithMockUser(username = "admin", authorities = "department:crud")
-public class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
+class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
   private KeycloakGroupService keycloakGroupService;
