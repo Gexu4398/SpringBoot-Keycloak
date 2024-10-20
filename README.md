@@ -14,7 +14,7 @@
 ### 环境要求
 - JDK 21 或更高版本
 - Maven 3.9.5 或更高版本
-- Postgres 16 或更高版本
+- PostgreSQL 16 或更高版本
 - Docker
 
 ### 克隆项目
