@@ -42,8 +42,9 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
       .withEnv("KEYCLOAK_DATABASE_PASSWORD", PGSQL_ROOT_PASSWORD)
       .withEnv("KEYCLOAK_PROXY_HEADERS", "xforwarded")
       .withEnv("KEYCLOAK_HTTP_RELATIVE_PATH", "/auth")
-      .withEnv("KEYCLOAK_EXTRA_ARGS", "-Dkeycloak.import=/tmp/realm.json")
-      .withClasspathResourceMapping("realm-export.json", "/tmp/realm.json", BindMode.READ_ONLY)
+      .withEnv("KEYCLOAK_EXTRA_ARGS", "--import-realm")
+      .withClasspathResourceMapping("realm-export.json",
+          "/opt/bitnami/keycloak/data/import/realm.json", BindMode.READ_ONLY)
       .withExposedPorts(8080)
       .withLogConsumer(new Slf4jLogConsumer(log))
       .dependsOn(postgres);

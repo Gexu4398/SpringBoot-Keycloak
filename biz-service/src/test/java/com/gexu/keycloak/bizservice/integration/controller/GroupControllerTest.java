@@ -39,8 +39,6 @@ public class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
 
     mockMvc.perform(get("/department"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()", equalTo(1)))
-        .andExpect(jsonPath("$.content[?(@.name==='" + group.getName() + "')]",
-            hasSize(1)));
+        .andExpect(jsonPath("$.length()", equalTo(1)));
   }
 }

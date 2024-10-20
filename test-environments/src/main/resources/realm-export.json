@@ -419,9 +419,7 @@
         "super_admin"
       ],
       "notBefore" : 0,
-      "groups" : [
-        "超级管理员"
-      ]
+      "groups" : []
     }
   ],
   "scopeMappings" : [

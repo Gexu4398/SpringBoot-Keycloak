@@ -1,7 +1,5 @@
 package com.gexu.keycloak.testenvironments;
 
-import com.gexu.keycloak.testenvironments.helper.DataHelper;
-import com.gexu.keycloak.testenvironments.listener.MyTestExecutionListener;
 import com.github.javafaker.Faker;
 import jakarta.persistence.EntityManager;
 import java.util.Locale;
@@ -17,8 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.TestExecutionListeners.MergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -34,21 +30,13 @@ import org.springframework.test.web.servlet.MockMvc;
 @TestInstance(Lifecycle.PER_CLASS)
 // 此处要设置 mergeMode，否则回替换调原来的 listeners，会导致部分测试失败
 // 参考文献 https://www.baeldung.com/spring-testexecutionlistener
-@TestExecutionListeners(value = MyTestExecutionListener.class, mergeMode = MergeMode.MERGE_WITH_DEFAULTS)
 @Rollback(false)
 abstract class TestEnvironment {
 
   protected Faker faker = new Faker(new Locale("zh-CN"));
 
   @Autowired
-  protected DataHelper dataHelper;
-
-  @Autowired
   protected MockMvc mockMvc;
-
-  @Autowired
-  @Qualifier("bizEntityManager")
-  protected EntityManager bizEntityManager;
 
   @Autowired
   @Qualifier("keycloakEntityManager")
@@ -63,7 +51,6 @@ abstract class TestEnvironment {
   @SneakyThrows
   void afterEach() {
 
-    bizEntityManager.clear();
     @Cleanup final var conn = bizDataSource.getConnection();
     // 禁用约束
     conn.createStatement().execute("SET REFERENTIAL_INTEGRITY = FALSE");
