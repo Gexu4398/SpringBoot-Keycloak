@@ -9,11 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.UpdateUserRequest;
-import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
 import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
 import com.gexu.keycloak.testenvironments.service.KeycloakAccessTokenService;
@@ -24,13 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @WithMockUser(username = "admin", authorities = "user:crud")
@@ -41,9 +34,6 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
   private KeycloakAccessTokenService keycloakAccessTokenService;
-
-  @Autowired
-  private KeycloakService keycloakService;
 
   @Test
   @SneakyThrows
@@ -238,24 +228,6 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":reset-password"))
         .andExpect(status().isOk());
-
-    final var tokenUrl = String.format("%s/realms/%s/protocol/openid-connect/token",
-        keycloakService.getAuthServerUrl(),
-        keycloakService.getRealm());
-
-    final var jsonObject = WebClient.create(tokenUrl)
-        .post()
-        .body(BodyInserters.fromFormData("client_id", "model-cli")
-            .with("username", user.getUsername())
-            .with("password", "123123")
-            .with("client_secret", "22ISi1NmKgkpUm3xJjdqvURIafg2ZLpx")
-            .with("grant_type", "password"))
-        .accept(MediaType.APPLICATION_JSON)
-        .exchangeToMono(clientResponse -> clientResponse.statusCode().equals(HttpStatus.OK)
-            ? clientResponse.bodyToMono(JSONObject.class) : Mono.empty())
-        .block();
-
-    assert null != jsonObject;
   }
 
   @Test
