@@ -44,7 +44,7 @@
   <properties>
     <java.version>21</java.version>
     <spring.boot-version>3.3.4</spring.boot-version>
-    <keycloak-version>26.0.0</keycloak-version>
+    <keycloak-version>26.0.1</keycloak-version>
     <hutool-version>5.8.31</hutool-version>
     <testcontainers-version>1.20.2</testcontainers-version>
     <testcontainers.keycloak-version>3.5.1</testcontainers.keycloak-version>

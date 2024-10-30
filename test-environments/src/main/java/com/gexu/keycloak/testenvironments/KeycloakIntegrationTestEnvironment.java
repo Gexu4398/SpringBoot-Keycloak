@@ -31,7 +31,7 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
           BindMode.READ_ONLY);
 
   public final static GenericContainer<?> keycloak = new GenericContainer<>(
-      DockerImageName.parse("bitnami/keycloak:26.0.1"))
+      DockerImageName.parse("bitnami/keycloak:26.0.2"))
       .withEnv("BASE_URL", "http://localhost/")
       .withEnv("KEYCLOAK_CREATE_ADMIN_USER", "true")
       .withEnv("KEYCLOAK_ADMIN_USER", "admin")

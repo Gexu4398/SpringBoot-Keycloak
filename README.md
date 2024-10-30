@@ -2,12 +2,12 @@
 
 ## 简介
 
-这个项目是基于 Spring Boot 3.3.4 和 Keycloak 26 构建的应用程序。该项目的目的是提供一个安全的用户身份验证和授权解决方案。
+这个项目是基于 Spring Boot 3.3.* 和 Keycloak 26.0.* 构建的应用程序。该项目的目的是提供一个安全的用户身份验证和授权解决方案。
 
 ## 技术栈
 
-- **后端**: Spring Boot 3.3.4
-- **身份验证**: bitnami/keycloak 26.0.1
+- **后端**: Spring Boot 3.3.*
+- **身份验证**: bitnami/keycloak 26.0.*
 - **数据库**: PostgreSQL 17
 - **构建工具**: Maven 3.9.5
 
