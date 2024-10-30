@@ -1,5 +1,2 @@
 *
-!/biz-batch-service/target/biz-batch-service.jar
 !/biz-service/target/biz-service.jar
-!/biz-shell/target/biz-shell.jar
-!/data-migrate-from-xts/target/data-migrate-from-xts.jar
