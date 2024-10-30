@@ -1,6 +1,7 @@
 package com.gexu.keycloak.bizservice.integration.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,7 +27,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 @Slf4j
-@WithMockUser(username = "admin", authorities = "user:crud")
+@WithMockUser(username = "admin", authorities = {
+    "user:crud",
+    "user:reset_password"
+})
 class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
@@ -228,6 +232,18 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":reset-password"))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  @SneakyThrows
+  void testDeleteUser() {
+
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
+
+    mockMvc.perform(delete("/user/" + user.getId()))
+        .andExpect(status().isOk());
+
+    Assertions.assertTrue(dataHelper.getUser(user.getUsername()).isEmpty());
   }
 
   @Test

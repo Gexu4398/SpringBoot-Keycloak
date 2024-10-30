@@ -4,12 +4,15 @@ import cn.hutool.core.util.StrUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.Group;
 import com.gexu.keycloak.bizkeycloakmodel.model.Role;
 import com.gexu.keycloak.bizkeycloakmodel.model.User;
+import com.gexu.keycloak.bizkeycloakmodel.model.UserEntity;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewRoleRequest;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
+import com.gexu.keycloak.bizkeycloakmodel.repository.UserEntityRepository;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakGroupService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakRoleService;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +30,22 @@ public class DataHelper {
 
   private final KeycloakRoleService keycloakRoleService;
 
+  private final UserEntityRepository userEntityRepository;
+
   @Autowired
   public DataHelper(KeycloakUserService keycloakUserService,
-      KeycloakGroupService keycloakGroupService, KeycloakRoleService keycloakRoleService) {
+      KeycloakGroupService keycloakGroupService, KeycloakRoleService keycloakRoleService,
+      UserEntityRepository userEntityRepository) {
 
     this.keycloakUserService = keycloakUserService;
     this.keycloakGroupService = keycloakGroupService;
     this.keycloakRoleService = keycloakRoleService;
+    this.userEntityRepository = userEntityRepository;
+  }
+
+  public Optional<UserEntity> getUser(String username) {
+
+    return userEntityRepository.findByUsername(username);
   }
 
   public User newUser(String username, String password) {
