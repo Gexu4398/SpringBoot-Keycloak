@@ -1,18 +1,9 @@
 package com.gexu.keycloak.bizkeycloakmodel.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.gexu.keycloak.bizkeycloakmodel.model.Group;
-import com.gexu.keycloak.bizkeycloakmodel.model.KeycloakRole;
-import com.gexu.keycloak.bizkeycloakmodel.model.Role;
-import com.gexu.keycloak.bizkeycloakmodel.model.User;
-import com.gexu.keycloak.bizkeycloakmodel.model.UserAttribute;
-import com.gexu.keycloak.bizkeycloakmodel.model.UserEntity;
-import com.gexu.keycloak.bizkeycloakmodel.repository.EventEntityRepository;
 import com.gexu.keycloak.bizkeycloakmodel.repository.KeycloakGroupRepository;
-import com.gexu.keycloak.bizkeycloakmodel.repository.UserEntityRepository;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,19 +16,12 @@ public class KeycloakGroupService {
 
   private final KeycloakGroupRepository keycloakGroupRepository;
 
-  private final UserEntityRepository userEntityRepository;
-
-  private final EventEntityRepository eventEntityRepository;
-
   @Autowired
   public KeycloakGroupService(KeycloakService keycloakService,
-      KeycloakGroupRepository keycloakGroupRepository, UserEntityRepository userEntityRepository,
-      EventEntityRepository eventEntityRepository) {
+      KeycloakGroupRepository keycloakGroupRepository) {
 
     this.keycloakService = keycloakService;
     this.keycloakGroupRepository = keycloakGroupRepository;
-    this.userEntityRepository = userEntityRepository;
-    this.eventEntityRepository = eventEntityRepository;
   }
 
   public List<Group> getPosterity(String groupId) {
@@ -116,59 +100,5 @@ public class KeycloakGroupService {
 
     final var groupResource = keycloakService.getGroupResource(id);
     groupResource.remove();
-  }
-
-  public List<User> getGroupUsers(String id) {
-
-    return userEntityRepository.findByGroups_IdAndUsernameNotLike(id).stream()
-        .map(this::getUserResponse)
-        .toList();
-  }
-
-  private User getUserResponse(UserEntity user) {
-
-    final var builder = User.builder()
-        .id(user.getId())
-        .username(user.getUsername())
-        .enabled(user.getEnabled())
-        .phoneNumber(user
-            .getAttributes()
-            .stream()
-            .filter(it -> "phoneNumber".equals(it.getName()))
-            .findFirst().orElseGet(UserAttribute::new)
-            .getValue())
-        .name(user.getFirstName())
-        .createdAt(user.getCreatedTimestamp());
-
-    if (CollUtil.isNotEmpty(user.getRoles())) {
-      final var roles = user.getRoles()
-          .stream()
-          .filter(KeycloakRole::getClientRole)
-          .map(role -> Role.builder()
-              .id(role.getId())
-              .name(role.getName())
-              .build())
-          .collect(Collectors.toSet());
-      builder.role(roles);
-    }
-
-    if (CollUtil.isNotEmpty(user.getGroups())) {
-      final var group = user.getGroups().stream().findFirst().orElseThrow();
-      builder.group(Group.builder()
-          .id(group.getId())
-          .name(group.getName())
-          .build());
-    }
-
-    eventEntityRepository.countByIpAddress(user.getId()).stream().findFirst().ifPresent(it ->
-        builder.commonIp(it[0].toString()));
-
-    eventEntityRepository.findFirstByUserIdAndTypeIsOrderByEventTimeDesc(user.getId(), "LOGIN")
-        .ifPresent(it -> {
-          builder.lastLoginIp(it.getIpAddress());
-          builder.lastLoginTime(it.getEventTime());
-        });
-
-    return builder.build();
   }
 }
