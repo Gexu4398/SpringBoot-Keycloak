@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.gexu.keycloak.bizkeycloakmodel.model.KeycloakRole;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.NewUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.model.request.UpdateUserRequest;
 import com.gexu.keycloak.bizkeycloakmodel.service.KeycloakUserService;
@@ -18,13 +19,17 @@ import com.gexu.keycloak.testenvironments.KeycloakIntegrationTestEnvironment;
 import com.gexu.keycloak.testenvironments.service.KeycloakAccessTokenService;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @WithMockUser(username = "admin", authorities = {
@@ -38,6 +43,10 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
   private KeycloakAccessTokenService keycloakAccessTokenService;
+
+  @Autowired
+  @Qualifier("keycloakTransactionManager")
+  private PlatformTransactionManager keycloakTransactionManager;
 
   @Test
   @SneakyThrows
@@ -230,7 +239,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
 
-    mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":reset-password"))
+    mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) + ":reset-password"))
         .andExpect(status().isOk());
   }
 
@@ -244,6 +253,47 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         .andExpect(status().isOk());
 
     Assertions.assertTrue(dataHelper.getUser(user.getUsername()).isEmpty());
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateUserRole() {
+
+    final var role = dataHelper.newRole(faker.name().title());
+    final var role_2 = dataHelper.newRole(faker.name().title());
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password(), null,
+        role.getId());
+
+    mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) +
+            "/role/" + role_2.getName()))
+        .andExpect(status().isOk());
+
+    new TransactionTemplate(keycloakTransactionManager).executeWithoutResult(status -> {
+      final var userEntity = dataHelper.getUser(user.getUsername()).orElseThrow();
+      final var roleIds = userEntity.getRoles().stream()
+          .map(KeycloakRole::getId)
+          .collect(Collectors.toSet());
+      Assertions.assertTrue(roleIds.contains(role_2.getId()) && !roleIds.contains(role.getId()));
+    });
+  }
+
+  @Test
+  @SneakyThrows
+  void testUpdateUserGroup() {
+
+    final var group = dataHelper.newGroup(faker.team().name(), null);
+    final var group_2 = dataHelper.newGroup(faker.team().name(), null);
+    final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password(),
+        group, null);
+
+    mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) +
+            "/group/" + group_2))
+        .andExpect(status().isOk());
+    new TransactionTemplate(keycloakTransactionManager).executeWithoutResult(status -> {
+      final var userEntity = dataHelper.getUser(user.getUsername()).orElseThrow();
+      Assertions.assertEquals(1, userEntity.getGroups().size());
+      Assertions.assertEquals(CollUtil.getFirst(userEntity.getGroups()).getId(), group_2);
+    });
   }
 
   @Test
