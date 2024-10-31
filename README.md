@@ -26,6 +26,7 @@
 
 1. `ssl-required` 一定要设置为 `none`，包括系统中也要同步设置，否则对于 http 请求，会一直 401.
 2. 新版keycloak请在控制台的realm-User profile中增加配置phoneNumber、picture和status，否则无法添加对应属性
+3. `User profile`中First name默认Required for Only users
 
 ### 克隆项目
 

@@ -63,7 +63,7 @@
     <dependency>
       <groupId>com.gexu.keycloak</groupId>
       <artifactId>biz-keycloak-model</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
