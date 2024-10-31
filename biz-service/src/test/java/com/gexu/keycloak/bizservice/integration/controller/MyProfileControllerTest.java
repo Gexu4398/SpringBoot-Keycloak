@@ -22,7 +22,6 @@ public class MyProfileControllerTest extends KeycloakIntegrationTestEnvironment 
   @SneakyThrows
   void testUpdateProfile() {
 
-    dataHelper.newUser(faker.name().firstName(), faker.internet().password());
     final var user = new User();
     user.setPhoneNumber(faker.phoneNumber().phoneNumber());
     user.setPicture(faker.internet().image());
