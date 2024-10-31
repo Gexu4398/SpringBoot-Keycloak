@@ -80,7 +80,7 @@ public class DataHelper {
 
     final var request = new NewRoleRequest();
     request.setName(name);
-    request.setScopes(List.of("super_admin"));
+    request.setScopes(List.of("user:crud"));
     return keycloakRoleService.newRole(request);
   }
 }
