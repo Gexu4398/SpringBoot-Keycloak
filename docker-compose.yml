@@ -25,8 +25,9 @@ services:
       - KC_DB_PASSWORD=example
       # 开启http
       - KC_HTTP_ENABLED=true
+      - KC_HOSTNAME=localhost
       # 禁用主机名严格检查
-      - KC_HOSTNAME_STRICT=false
+      # - KC_HOSTNAME_STRICT=false
       # 设置相对路径为 /auth
       - KC_HTTP_RELATIVE_PATH=/auth
       - KC_PROXY_HEADERS=xforwarded
