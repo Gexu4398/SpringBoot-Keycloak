@@ -7,7 +7,7 @@
 ## 技术栈
 
 - **后端**: Spring Boot 3.3.*
-- **身份验证**: bitnami/keycloak 26.0.*
+- **身份验证**: keycloak/keycloak 26.0.* 或 bitnami/keycloak 26.0.*
 - **数据库**: PostgreSQL 17
 - **构建工具**: Maven 3.9.5
 
