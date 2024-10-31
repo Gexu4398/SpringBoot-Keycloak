@@ -31,23 +31,43 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
           BindMode.READ_ONLY);
 
   public final static GenericContainer<?> keycloak = new GenericContainer<>(
-      DockerImageName.parse("bitnami/keycloak:26.0.2"))
+      DockerImageName.parse("keycloak/keycloak:26.0.4"))
       .withEnv("BASE_URL", "http://localhost/")
-      .withEnv("KEYCLOAK_CREATE_ADMIN_USER", "true")
-      .withEnv("KEYCLOAK_ADMIN_USER", "admin")
-      .withEnv("KEYCLOAK_ADMIN_PASSWORD", "admin")
-      .withEnv("KEYCLOAK_DATABASE_NAME", "keycloak")
-      .withEnv("KEYCLOAK_DATABASE_HOST", "postgres")
-      .withEnv("KEYCLOAK_DATABASE_USER", PGSQL_ROOT_USER)
-      .withEnv("KEYCLOAK_DATABASE_PASSWORD", PGSQL_ROOT_PASSWORD)
-      .withEnv("KEYCLOAK_PROXY_HEADERS", "xforwarded")
-      .withEnv("KEYCLOAK_HTTP_RELATIVE_PATH", "/auth")
-      .withEnv("KEYCLOAK_EXTRA_ARGS", "--import-realm")
+      .withEnv("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
+      .withEnv("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
+      .withEnv("KC_DB_URL", "jdbc:postgresql://postgres:5432/keycloak")
+      .withEnv("KC_DB", "postgres")
+      .withEnv("KC_DB_USERNAME", PGSQL_ROOT_USER)
+      .withEnv("KC_DB_PASSWORD", PGSQL_ROOT_PASSWORD)
+      .withEnv("KC_HOSTNAME_STRICT", "false")
+      .withEnv("KC_PROXY_HEADERS", "xforwarded")
+      .withEnv("KC_HTTP_RELATIVE_PATH", "/auth")
+      .withEnv("KC_HTTP_ENABLED", "true")
+      .withCommand("start --http-enabled=true --import-realm")
       .withClasspathResourceMapping("realm-export.json",
-          "/opt/bitnami/keycloak/data/import/realm.json", BindMode.READ_ONLY)
+          "/opt/keycloak/data/import/realm.json", BindMode.READ_ONLY)
       .withExposedPorts(8080)
       .withLogConsumer(new Slf4jLogConsumer(log))
       .dependsOn(postgres);
+
+//  public final static GenericContainer<?> keycloak = new GenericContainer<>(
+//      DockerImageName.parse("bitnami/keycloak:26.0.2"))
+//      .withEnv("BASE_URL", "http://localhost/")
+//      .withEnv("KEYCLOAK_CREATE_ADMIN_USER", "true")
+//      .withEnv("KEYCLOAK_ADMIN_USER", "admin")
+//      .withEnv("KEYCLOAK_ADMIN_PASSWORD", "admin")
+//      .withEnv("KEYCLOAK_DATABASE_NAME", "keycloak")
+//      .withEnv("KEYCLOAK_DATABASE_HOST", "postgres")
+//      .withEnv("KEYCLOAK_DATABASE_USER", PGSQL_ROOT_USER)
+//      .withEnv("KEYCLOAK_DATABASE_PASSWORD", PGSQL_ROOT_PASSWORD)
+//      .withEnv("KEYCLOAK_PROXY_HEADERS", "xforwarded")
+//      .withEnv("KEYCLOAK_HTTP_RELATIVE_PATH", "/auth")
+//      .withEnv("KEYCLOAK_EXTRA_ARGS", "--import-realm")
+//      .withClasspathResourceMapping("realm-export.json",
+//          "/opt/bitnami/keycloak/data/import/realm.json", BindMode.READ_ONLY)
+//      .withExposedPorts(8080)
+//      .withLogConsumer(new Slf4jLogConsumer(log))
+//      .dependsOn(postgres);
 
   @Autowired
   private KeycloakService keycloakService;
