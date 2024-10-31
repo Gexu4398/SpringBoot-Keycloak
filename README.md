@@ -31,5 +31,5 @@
 ### 克隆项目
 
 ```bash
-git clone https://github.com/Gexu4398/SpringBoot3-Keycloak26.git
-cd SpringBoot3-Keycloak26
+git clone https://github.com/Gexu4398/SpringBoot-Keycloak.git
+cd SpringBoot-Keycloak

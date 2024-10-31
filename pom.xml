@@ -15,7 +15,7 @@
   <artifactId>SpringBoot-Keycloak</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>SpringBoot3-Keycloak26</name>
+  <name>SpringBoot-Keycloak</name>
   <description>Demo project for Spring Boot</description>
   <modules>
     <module>biz-keycloak-model</module>
