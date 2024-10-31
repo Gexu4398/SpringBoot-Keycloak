@@ -23,6 +23,7 @@ public class MyProfileControllerTest extends KeycloakIntegrationTestEnvironment 
   void testUpdateProfile() {
 
     final var user = new User();
+    user.setName("超级管理员");
     user.setPhoneNumber(faker.phoneNumber().phoneNumber());
     user.setPicture(faker.internet().image());
 
