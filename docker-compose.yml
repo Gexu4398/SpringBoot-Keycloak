@@ -13,7 +13,7 @@ services:
       - ./init-postgres:/docker-entrypoint-initdb.d
 
   keycloak:
-    image: keycloak/keycloak:26.0.4
+    image: keycloak/keycloak:26.0.5
     environment:
       - BASE_URL=http://localhost/
       - APP_NAME=MySystem

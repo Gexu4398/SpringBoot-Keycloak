@@ -13,7 +13,7 @@ services:
       - ./init-postgres:/docker-entrypoint-initdb.d
 
   keycloak:
-    image: bitnami/keycloak:26.0.2
+    image: bitnami/keycloak:26.0.5
     environment:
       # 启用CLI占位符替换
       - JAVA_OPTS="-Dkeycloak.migration.replace-placeholders=true"

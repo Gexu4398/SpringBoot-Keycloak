@@ -31,7 +31,7 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
           BindMode.READ_ONLY);
 
   public final static GenericContainer<?> keycloak = new GenericContainer<>(
-      DockerImageName.parse("keycloak/keycloak:26.0.4"))
+      DockerImageName.parse("keycloak/keycloak:26.0.5"))
       .withEnv("BASE_URL", "http://localhost/")
       .withEnv("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
       .withEnv("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
@@ -51,7 +51,7 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
       .dependsOn(postgres);
 
 //  public final static GenericContainer<?> keycloak = new GenericContainer<>(
-//      DockerImageName.parse("bitnami/keycloak:26.0.2"))
+//      DockerImageName.parse("bitnami/keycloak:26.0.5"))
 //      .withEnv("BASE_URL", "http://localhost/")
 //      .withEnv("KEYCLOAK_CREATE_ADMIN_USER", "true")
 //      .withEnv("KEYCLOAK_ADMIN_USER", "admin")
