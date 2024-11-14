@@ -10,14 +10,14 @@
 - **后端**: Spring Boot 3.3.*
 - **身份验证**: keycloak/keycloak 26.0.* 或 bitnami/keycloak 26.0.*
 - **数据库**: PostgreSQL 17
-- **构建工具**: Maven 3.9.5
+- **构建工具**: Maven 3.9.9
 
 ## 快速开始
 
 ### 环境要求
 
 - JDK 21 或更高版本
-- Maven 3.9.5 或更高版本
+- Maven 3.9.9 或更高版本
 - PostgreSQL 16 或更高版本
 - Docker
 
