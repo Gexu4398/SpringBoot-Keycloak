@@ -24,7 +24,8 @@ spring:
     open-in-view: true
 management:
   endpoints:
-    enabled-by-default: true
+    access:
+      default: unrestricted
 
 springdoc:
   swagger-ui:

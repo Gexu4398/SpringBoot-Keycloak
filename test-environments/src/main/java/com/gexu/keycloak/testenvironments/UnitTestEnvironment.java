@@ -8,14 +8,14 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class UnitTestEnvironment extends TestEnvironment {
 
-  @MockBean
+  @MockitoBean
   private UserEntityRepository userEntityRepository;
 
-  @MockBean
+  @MockitoBean
   private KeycloakService keycloakService;
 
   @BeforeAll

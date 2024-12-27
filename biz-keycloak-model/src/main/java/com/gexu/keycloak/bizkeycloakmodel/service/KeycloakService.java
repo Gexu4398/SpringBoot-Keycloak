@@ -114,10 +114,7 @@ public class KeycloakService {
   public UserResource getUserResource(String username) {
 
     final var usersResource = getUsersResource();
-    final var ur = usersResource
-        .search(username)
-        .stream()
-        .findFirst()
+    final var ur = userEntityRepository.findByUsernameAndRealmId(username, getRealm())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "用户不存在！"));
     return usersResource.get(ur.getId());
   }
