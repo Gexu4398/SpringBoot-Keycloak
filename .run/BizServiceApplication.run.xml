@@ -18,10 +18,10 @@
     <output_file path="$PROJECT_DIR$/local.log" is_save="true"/>
     <module name="biz-service"/>
     <option name="SPRING_BOOT_MAIN_CLASS"
-            value="com.gexu.keycloak.bizservice.BizServiceApplication"/>
+            value="com.gregory.keycloak.bizservice.BizServiceApplication"/>
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.gexu.keycloak.bizservice.*"/>
+        <option name="PATTERN" value="com.gregory.keycloak.bizservice.*"/>
         <option name="ENABLED" value="true"/>
       </pattern>
     </extension>
@@ -53,7 +53,7 @@
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
     <module name="biz-service"/>
     <option name="SPRING_BOOT_MAIN_CLASS"
-            value="com.gexu.keycloak.bizservice.BizServiceApplication"/>
+            value="com.gregory.keycloak.bizservice.BizServiceApplication"/>
     <method v="2">
       <option name="Make" enabled="true"/>
     </method>

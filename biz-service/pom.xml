@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.gexu</groupId>
+    <groupId>com.gregory</groupId>
     <artifactId>SpringBoot-Keycloak</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.gexu.keycloak</groupId>
+  <groupId>com.gregory.keycloak</groupId>
   <artifactId>biz-service</artifactId>
 
   <properties>
@@ -48,7 +48,7 @@
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.gexu.keycloak</groupId>
+      <groupId>com.gregory.keycloak</groupId>
       <artifactId>biz-keycloak-model</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
@@ -60,7 +60,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.gexu.keycloak</groupId>
+      <groupId>com.gregory.keycloak</groupId>
       <artifactId>test-environments</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

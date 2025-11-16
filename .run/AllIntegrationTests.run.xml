@@ -4,12 +4,12 @@
     <shortenClasspath name="ARGS_FILE" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.gexu.keycloak.bizservice.suite.*" />
+        <option name="PATTERN" value="com.gregory.keycloak.bizservice.suite.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="PACKAGE_NAME" value="com.gexu.keycloak.bizservice.suite" />
-    <option name="MAIN_CLASS_NAME" value="com.gexu.keycloak.bizservice.suite.AllIntegrationTests" />
+    <option name="PACKAGE_NAME" value="com.gregory.keycloak.bizservice.suite" />
+    <option name="MAIN_CLASS_NAME" value="com.gregory.keycloak.bizservice.suite.AllIntegrationTests" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <method v="2">
