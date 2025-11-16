@@ -1,19 +1,21 @@
 services:
 
   postgres:
-    image: postgres:alpine3.20
-    restart: always
-    command: postgres -c 'max_connections=250'
+    image: postgres:alpine3.22
+    container_name: postgres
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=example
-    ports:
-      - "5432:5432"
+    command: postgres -c 'max_connections=250'
     volumes:
       - ./init-postgres:/docker-entrypoint-initdb.d
+    restart: always
+    ports:
+      - "5432:5432"
 
   keycloak:
-    image: keycloak/keycloak:26.0.5
+    image: keycloak/keycloak:26.4.5
+    container_name: keycloak
     environment:
       - BASE_URL=http://localhost/
       - APP_NAME=MySystem

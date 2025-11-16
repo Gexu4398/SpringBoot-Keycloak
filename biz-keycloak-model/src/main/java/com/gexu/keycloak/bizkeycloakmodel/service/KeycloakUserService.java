@@ -124,9 +124,8 @@ public class KeycloakUserService {
 
   private Specification<UserEntity> userNameNotStart() {
 
-    return (root, query, criteriaBuilder) -> criteriaBuilder.and(
-        criteriaBuilder.notLike(root.get(UserEntity_.USERNAME), "reserved_%")
-    );
+    return (root, query, criteriaBuilder) ->
+        criteriaBuilder.notLike(root.get(UserEntity_.USERNAME), "reserved_%");
   }
 
   public User registerUser(RegisterUserRequest request) {
@@ -276,8 +275,7 @@ public class KeycloakUserService {
       Set<String> statusSet, Pageable pageable) {
 
     final var users = userEntityRepository.findAll(
-        Specification
-            .where(nameLike(keyword))
+        nameLike(keyword)
             .and(isRealm(keycloakService.getRealm()))
             .and(statusIn(statusSet))
             .and(roleIs(roleId))
@@ -292,8 +290,7 @@ public class KeycloakUserService {
       Set<String> statusSet) {
 
     final var users = userEntityRepository.findAll(
-        Specification
-            .where(nameLike(keyword))
+        nameLike(keyword)
             .and(isRealm(keycloakService.getRealm()))
             .and(statusIn(statusSet))
             .and(roleIs(roleId))
@@ -306,8 +303,7 @@ public class KeycloakUserService {
   public Long countUser() {
 
     return userEntityRepository.count(
-        Specification
-            .where(isRealm(keycloakService.getRealm()))
+        isRealm(keycloakService.getRealm())
             .and(userNameNotStart())
     );
   }

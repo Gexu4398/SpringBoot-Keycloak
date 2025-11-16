@@ -24,14 +24,14 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
   private final static String PGSQL_ROOT_PASSWORD = "example";
 
   public final static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-      DockerImageName.parse("postgres:alpine3.20"))
+      DockerImageName.parse("postgres:alpine3.22"))
       .withUsername(PGSQL_ROOT_USER)
       .withPassword(PGSQL_ROOT_PASSWORD)
       .withClasspathResourceMapping("databases.sql", "/docker-entrypoint-initdb.d/databases.sql",
           BindMode.READ_ONLY);
 
   public final static GenericContainer<?> keycloak = new GenericContainer<>(
-      DockerImageName.parse("keycloak/keycloak:26.0.5"))
+      DockerImageName.parse("keycloak/keycloak:26.4.5"))
       .withEnv("BASE_URL", "http://localhost/")
       .withEnv("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
       .withEnv("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
@@ -49,25 +49,6 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
       .withExposedPorts(8080)
       .withLogConsumer(new Slf4jLogConsumer(log))
       .dependsOn(postgres);
-
-//  public final static GenericContainer<?> keycloak = new GenericContainer<>(
-//      DockerImageName.parse("bitnami/keycloak:26.0.5"))
-//      .withEnv("BASE_URL", "http://localhost/")
-//      .withEnv("KEYCLOAK_CREATE_ADMIN_USER", "true")
-//      .withEnv("KEYCLOAK_ADMIN_USER", "admin")
-//      .withEnv("KEYCLOAK_ADMIN_PASSWORD", "admin")
-//      .withEnv("KEYCLOAK_DATABASE_NAME", "keycloak")
-//      .withEnv("KEYCLOAK_DATABASE_HOST", "postgres")
-//      .withEnv("KEYCLOAK_DATABASE_USER", PGSQL_ROOT_USER)
-//      .withEnv("KEYCLOAK_DATABASE_PASSWORD", PGSQL_ROOT_PASSWORD)
-//      .withEnv("KEYCLOAK_PROXY_HEADERS", "xforwarded")
-//      .withEnv("KEYCLOAK_HTTP_RELATIVE_PATH", "/auth")
-//      .withEnv("KEYCLOAK_EXTRA_ARGS", "--import-realm")
-//      .withClasspathResourceMapping("realm-export.json",
-//          "/opt/bitnami/keycloak/data/import/realm.json", BindMode.READ_ONLY)
-//      .withExposedPorts(8080)
-//      .withLogConsumer(new Slf4jLogConsumer(log))
-//      .dependsOn(postgres);
 
   @Autowired
   private KeycloakService keycloakService;

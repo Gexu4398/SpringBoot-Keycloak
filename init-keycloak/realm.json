@@ -2321,7 +2321,7 @@
     "frontendUrl" : "",
     "acr.loa.map" : "{}"
   },
-  "keycloakVersion" : "26.0.2",
+  "keycloakVersion" : "26.4.5",
   "userManagedAccessAllowed" : false,
   "clientProfiles" : {
     "profiles" : []
