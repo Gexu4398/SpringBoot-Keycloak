@@ -2,12 +2,6 @@ server:
   port: 8081
   servlet:
     context-path: /api/v1
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-exception: false
-    # 如果前端请求带参 ?trace=true 则会显示 trace 字段
-    include-stacktrace: on_param
   forward-headers-strategy: framework
 
 spring:
@@ -25,6 +19,14 @@ spring:
           jwk-set-uri: http://localhost:8080/auth/realms/console-app/protocol/openid-connect/certs
   jpa:
     open-in-view: true
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+      include-exception: false
+      # 如果前端请求带参 ?trace=true 则会显示 trace 字段
+      include-stacktrace: on_param
+
 management:
   endpoints:
     access:
