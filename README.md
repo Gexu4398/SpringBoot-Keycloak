@@ -2,15 +2,15 @@
 
 ## 简介
 
-本项目是基于 Spring Boot 3.5.7 和 Keycloak 26.4.5（keycloak/keycloak）
+本项目是基于 Spring Boot 4.0.0 和 Keycloak 26.4.5（keycloak/keycloak）
 构建的应用程序。该项目的目的是提供一个安全的用户身份验证和授权解决方案。
 持续升级spring boot和keycloak版本
 
 ## 技术栈
 
-- **后端**: Spring Boot 3.5.7
+- **后端**: Spring Boot 4.0.0
 - **身份验证**: Keycloak 26.4.5（keycloak/keycloak）
-- **数据库**: PostgreSQL 17
+- **数据库**: PostgreSQL 18
 - **构建工具**: Maven 3.9.9
 
 ## 快速开始
