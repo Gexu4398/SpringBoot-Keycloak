@@ -1,7 +1,7 @@
 services:
 
   postgres:
-    image: postgres:alpine3.22
+    image: postgres:alpine3.23
     container_name: postgres
     environment:
       - POSTGRES_USER=root
@@ -14,7 +14,7 @@ services:
       - "5432:5432"
 
   keycloak:
-    image: keycloak/keycloak:26.4.5
+    image: keycloak/keycloak:26.6.1
     container_name: keycloak
     environment:
       - BASE_URL=http://localhost/

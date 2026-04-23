@@ -24,14 +24,14 @@ public abstract class KeycloakIntegrationTestEnvironment extends TestEnvironment
   private final static String PGSQL_ROOT_PASSWORD = "example";
 
   public final static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-      DockerImageName.parse("postgres:alpine3.22"))
+      DockerImageName.parse("postgres:alpine3.23"))
       .withUsername(PGSQL_ROOT_USER)
       .withPassword(PGSQL_ROOT_PASSWORD)
       .withClasspathResourceMapping("databases.sql", "/docker-entrypoint-initdb.d/databases.sql",
           BindMode.READ_ONLY);
 
   public final static GenericContainer<?> keycloak = new GenericContainer<>(
-      DockerImageName.parse("keycloak/keycloak:26.4.5"))
+      DockerImageName.parse("keycloak/keycloak:26.6.1"))
       .withEnv("BASE_URL", "http://localhost/")
       .withEnv("KC_BOOTSTRAP_ADMIN_USERNAME", "admin")
       .withEnv("KC_BOOTSTRAP_ADMIN_PASSWORD", "admin")
