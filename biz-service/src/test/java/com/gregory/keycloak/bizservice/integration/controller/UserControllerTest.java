@@ -1,6 +1,7 @@
 package com.gregory.keycloak.bizservice.integration.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,15 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
-@WithMockUser(username = "admin", authorities = {
-    "user:crud",
-    "user:reset_password"
-})
 class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
@@ -66,6 +63,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setPhoneNumber(faker.phoneNumber().cellPhone());
 
     mockMvc.perform(post("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -88,6 +86,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setPicture(faker.internet().image());
 
     mockMvc.perform(put("/user/" + user.getId())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -112,6 +111,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setGroupId(group_2);
 
     mockMvc.perform(put("/user/" + user.getId())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -133,6 +133,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setRoleId(Set.of(role_2.getId()));
 
     mockMvc.perform(put("/user/" + user.getId())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -158,6 +159,7 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setPhoneNumber(faker.phoneNumber().cellPhone());
 
     mockMvc.perform(post("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk());
@@ -165,7 +167,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     final var user = keycloakUserService.getUsers(null, null, request.getUsername().toLowerCase(),
         null).getFirst();
 
-    mockMvc.perform(get("/user/" + user.getId()))
+    mockMvc.perform(get("/user/" + user.getId())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.username", equalTo(request.getUsername().toLowerCase())))
         .andExpect(jsonPath("$.phoneNumber", equalTo(request.getPhoneNumber())))
@@ -188,28 +191,33 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     dataHelper.newUser(faker.name().firstName(), faker.internet().password(), group_2,
         role.getId());
 
-    mockMvc.perform(get("/user"))
+    mockMvc.perform(get("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk())
         // 默认会有admin用户，此处需要为5
         .andExpect(jsonPath("$.content.length()", equalTo(5)));
 
     mockMvc.perform(get("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .param("status", "normal"))
         .andExpect(status().isOk())
         // admin用户没有状态，且只有角色不为空的才是normal状态
         .andExpect(jsonPath("$.content.length()", equalTo(2)));
 
     mockMvc.perform(get("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .param("groupId", group_2))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()", equalTo(1)));
 
     mockMvc.perform(get("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .param("roleId", role.getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content.length()", equalTo(2)));
 
     mockMvc.perform(get("/user")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud")))
             .param("groupId", group)
             .param("roleId", role.getId()))
         .andExpect(status().isOk())
@@ -222,12 +230,14 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
 
-    mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":disable"))
+    mockMvc.perform(post("/user/" + StrUtil.join(",", List.of(user.getId())) + ":disable")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk());
 
     Assertions.assertFalse(keycloakUserService.getUser(user.getId()).getEnabled());
 
-    mockMvc.perform(post("/user/" + user.getId() + ":enable"))
+    mockMvc.perform(post("/user/" + user.getId() + ":enable")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk());
 
     Assertions.assertTrue(keycloakUserService.getUser(user.getId()).getEnabled());
@@ -239,7 +249,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
 
-    mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) + ":reset-password"))
+    mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) + ":reset-password")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:reset_password"))))
         .andExpect(status().isOk());
   }
 
@@ -249,7 +260,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var user = dataHelper.newUser(faker.name().firstName(), faker.internet().password());
 
-    mockMvc.perform(delete("/user/" + user.getId()))
+    mockMvc.perform(delete("/user/" + user.getId())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk());
 
     Assertions.assertTrue(dataHelper.getUser(user.getUsername()).isEmpty());
@@ -265,7 +277,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         role.getId());
 
     mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) +
-            "/role/" + role_2.getName()))
+                "/role/" + role_2.getName())
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk());
 
     new TransactionTemplate(keycloakTransactionManager).executeWithoutResult(status -> {
@@ -287,8 +300,10 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
         group, null);
 
     mockMvc.perform(post("/user/" + StrUtil.join(",", Set.of(user.getId())) +
-            "/group/" + group_2))
+                "/group/" + group_2)
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk());
+
     new TransactionTemplate(keycloakTransactionManager).executeWithoutResult(status -> {
       final var userEntity = dataHelper.getUser(user.getUsername()).orElseThrow();
       Assertions.assertEquals(1, userEntity.getGroups().size());
@@ -311,7 +326,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     keycloakAccessTokenService.getBearer(keycloak, "user_3", "user_3");
     keycloakAccessTokenService.getBearer(keycloak, "user_4", "user_4");
 
-    mockMvc.perform(get("/user/onlineNum"))
+    mockMvc.perform(get("/user/onlineNum")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.count", equalTo(4)));
   }
@@ -329,7 +345,8 @@ class UserControllerTest extends KeycloakIntegrationTestEnvironment {
     keycloakAccessTokenService.getBearer(keycloak, "user_3", "user_3");
     keycloakAccessTokenService.getBearer(keycloak, "user_4", "user_4");
 
-    mockMvc.perform(get("/user/offlineNum"))
+    mockMvc.perform(get("/user/offlineNum")
+            .with(jwt().authorities(new SimpleGrantedAuthority("user:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.count", equalTo(4)));
   }

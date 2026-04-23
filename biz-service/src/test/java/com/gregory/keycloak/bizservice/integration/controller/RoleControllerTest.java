@@ -2,6 +2,7 @@ package com.gregory.keycloak.bizservice.integration.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
@@ -22,10 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Slf4j
-@WithMockUser(username = "admin", authorities = "role:crud")
 class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
@@ -40,6 +40,7 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setScopes(List.of("role:crud"));
 
     mockMvc.perform(post("/role")
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -51,7 +52,9 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
   void testUpdateRole() {
 
     final var role = dataHelper.newRole(faker.name().title());
+
     mockMvc.perform(put("/role/" + role.getName())
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(Set.of("role:crud", "department:crud"))))
         .andExpect(status().isOk())
@@ -68,7 +71,8 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
     dataHelper.newRole(faker.name().title());
     dataHelper.newRole(faker.name().title());
 
-    mockMvc.perform(get("/role"))
+    mockMvc.perform(get("/role")
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", equalTo(4)))
         .andExpect(jsonPath("$[0].name", equalTo("超级管理员")));
@@ -80,7 +84,8 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var role = dataHelper.newRole(faker.name().title());
 
-    mockMvc.perform(get("/role/" + role.getName()))
+    mockMvc.perform(get("/role/" + role.getName())
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", equalTo(role.getId())))
         .andExpect(jsonPath("$.name", equalTo(role.getName())))
@@ -93,10 +98,12 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var role = dataHelper.newRole(faker.name().title());
 
-    mockMvc.perform(delete("/role/" + role.getName()))
+    mockMvc.perform(delete("/role/" + role.getName())
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud"))))
         .andExpect(status().isOk());
 
     mockMvc.perform(head("/role")
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud")))
             .param("roleName", role.getName()))
         .andExpect(status().isNotFound());
   }
@@ -111,6 +118,7 @@ class RoleControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setNewRoleName(faker.name().title());
 
     mockMvc.perform(post("/role/" + role.getName() + ":rename")
+            .with(jwt().authorities(new SimpleGrantedAuthority("role:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())

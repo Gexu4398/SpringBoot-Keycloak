@@ -3,6 +3,7 @@ package com.gregory.keycloak.bizservice.integration.controller;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,10 +23,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Slf4j
-@WithMockUser(username = "admin", authorities = "department:crud")
 class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
 
   @Autowired
@@ -42,11 +42,13 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     group.setName(faker.team().name());
 
     mockMvc.perform(post("/department")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(group)))
         .andExpect(status().isOk());
 
-    mockMvc.perform(get("/department"))
+    mockMvc.perform(get("/department")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", equalTo(1)))
         .andExpect(jsonPath("$.[?(@.name=='" + group.getName() + "')]", hasSize(1)));
@@ -60,6 +62,7 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     group.setName(faker.team().name());
 
     mockMvc.perform(post("/department")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(group)))
         .andExpect(status().isOk());
@@ -71,6 +74,7 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     request.setNewGroupName(faker.team().name());
 
     mockMvc.perform(post("/department/" + managedGroup.getId() + ":rename")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content(JSONUtil.toJsonStr(request)))
         .andExpect(status().isOk())
@@ -90,6 +94,7 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     final var groupToMove = dataHelper.newGroup("moveGroup_3", group_2);
 
     mockMvc.perform(post("/department/" + groupToMove + ":move")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud")))
             .contentType(MediaType.APPLICATION_JSON)
             .content("{}"))
         .andExpect(status().isOk());
@@ -97,7 +102,8 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     Assertions.assertEquals(2, keycloakGroupService.getGroups()
         .stream().filter(it -> StrUtil.isBlank(it.getParentId())).count());
 
-    mockMvc.perform(get("/department"))
+    mockMvc.perform(get("/department")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", equalTo(3)))
         .andExpect(jsonPath("$.[?(@.name=='moveGroup_3')].parentId", hasSize(1)))
@@ -111,7 +117,8 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     final var name = faker.team().name();
     final var group = dataHelper.newGroup(name, null);
 
-    mockMvc.perform(get("/department/" + group))
+    mockMvc.perform(get("/department/" + group)
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name", equalTo(name)));
   }
@@ -124,7 +131,8 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
     dataHelper.newGroup(faker.team().name(), null);
     dataHelper.newGroup(faker.team().name(), null);
 
-    mockMvc.perform(get("/department"))
+    mockMvc.perform(get("/department")
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", equalTo(3)));
   }
@@ -135,7 +143,8 @@ class GroupControllerTest extends KeycloakIntegrationTestEnvironment {
 
     final var group = dataHelper.newGroup(faker.team().name(), null);
 
-    mockMvc.perform(delete("/department/" + group))
+    mockMvc.perform(delete("/department/" + group)
+            .with(jwt().authorities(new SimpleGrantedAuthority("department:crud"))))
         .andExpect(status().isOk());
 
     Assertions.assertEquals(0, keycloakGroupService.getGroups().size());

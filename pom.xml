@@ -55,6 +55,7 @@
     <junit.suite-version>6.0.1</junit.suite-version>
     <rome.opml-version>2.1.0</rome.opml-version>
     <junit-jupiter-version>1.21.3</junit-jupiter-version>
+    <commons-io.version>2.20.0</commons-io.version>
     <maven.build.timestamp.format>yyyMMddHHmmss</maven.build.timestamp.format>
   </properties>
 
@@ -136,6 +137,11 @@
         <groupId>org.testcontainers</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>${junit-jupiter-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
